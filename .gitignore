@@ -2,3 +2,4 @@ config.txt
 build
 dist
 *.spec
+tmp_audion.py

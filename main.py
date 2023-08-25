@@ -10,7 +10,7 @@ gtranslate = GoogleTranslate()
 language='ru_RU'
 f = open("config.txt",'r')
 TOKEN=f.readline()
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(TOKEN) #<---- Если запускаете, впишите сюда токен бота
 r = sr.Recognizer()
 
 def recognise(filename):
@@ -18,11 +18,8 @@ def recognise(filename):
         audio_text = r.listen(source)
         try:
             text = r.recognize_google(audio_text,language=language)
-            # print('Converting audio transcripts into text ...')
-            # print(text)
             return [text,1]
         except:
-            # print('Sorry.. run again...')
             return ["Sorry.. run again...",0]
 
 @bot.message_handler(content_types=['voice'])
@@ -37,8 +34,7 @@ def voice_processing(message):
     os.system("ffmpeg -i "+file_name_full+"  "+file_name_full_converted)
     text,f=recognise(file_name_full_converted)
     if f:
-        text = "Ты сказал: " + text + "😳\n"+"А теперь на английском: "+gtranslate.translate(text, "English").result
-        bot.reply_to(message, text)
+        bot.reply_to(message, text = "Ты сказал: " + text + "😳\n"+"А теперь на английском: "+gtranslate.translate(text, "English").result)
     else:
         bot.reply_to(message, text)
     os.remove(file_name_full)
@@ -54,7 +50,8 @@ def get_keyboard():
     btn5 = types.KeyboardButton("Лябовь❤️")
     btn6 = types.KeyboardButton("ChatGPT для бабушек🤖")
     btn7 = types.KeyboardButton("❓Sql, NoSql? ЧТО?❓")
-    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
+    btn8 = types.KeyboardButton("GIT")
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8)
 
     return markup
 
@@ -86,6 +83,10 @@ def get_text_messages(message):
     elif message.text == "/sql" or message.text == "❓Sql, NoSql? ЧТО?❓":
         bot.send_voice(message.from_user.id,open("voice\\sql_nosql.ogg",'rb'))
     
+    elif message.text == "/git" or message.text == "GIT":
+        bot.send_message(message.from_user.id, "Ссылка на репозиторий: https://github.com/VsevolodDyraev/telegram_bot")
+    
+
     else:
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.") 
 
